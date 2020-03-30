@@ -8,21 +8,31 @@ import Backdrop from './Backdrop'
 
 
 
-const ModalOverlay = props => {
+const ModalOverlay = ({
+  className,
+  style,
+  headerClassName,
+  header,
+  onSubmit,
+  contentClassName,
+  children,
+  footerClassName,
+  footer
+}) => {
   const content = (
     <div
-      className={`modal ${props.className || ''}`}
-      style={props.style}
+      className={`modal ${className || ''}`}
+      style={style}
     >
-      <header className={`modal__header ${props.headerClassName || ''}`}>
-        <h2>{props.header}</h2>
+      <header className={`modal__header ${headerClassName || ''}`}>
+        <h2>{header}</h2>
       </header>
-      <form onSubmit={props.onSubmit ? props.onSubmit : (event) => event.preventDefault()}>
-        <div className={`modal__content ${props.contentClassName || ''}`}>
-          {props.children}
+      <form onSubmit={onSubmit ? onSubmit : (event) => event.preventDefault()}>
+        <div className={`modal__content ${contentClassName || ''}`}>
+          {children}
         </div>
-        <footer className={`modal__footer ${props.footerClassName || ''}`}>
-          {props.footer}
+        <footer className={`modal__footer ${footerClassName || ''}`}>
+          {footer}
         </footer>
       </form>
     </div>

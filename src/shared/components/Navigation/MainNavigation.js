@@ -9,7 +9,7 @@ import SideDrawer from './SideDrawer'
 import Backdrop from '../UIElements/Backdrop'
 
 
-export default (props) => {
+const MainNavigation =  () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   return (
@@ -39,3 +39,4 @@ export default (props) => {
     </React.Fragment>
   )
 }
+export default MainNavigation

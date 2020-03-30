@@ -22,7 +22,7 @@ const inputReducer = (state, action) => {
   }
 }
 
-export default props => {
+const Input = props => {
   const changeHandler = event => {
     dispatch({
       type: 'CHANGE',
@@ -75,3 +75,4 @@ export default props => {
     </div>
   )
 }
+export default Input

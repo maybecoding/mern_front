@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 
 import './PlaceForm.css'
 
@@ -7,45 +7,21 @@ import { useForm } from '../../shared/hooks/form'
 import Card from '../../shared/components/UIElements/Card'
 import Input from '../../shared/components/FormElements/Input'
 import Button from '../../shared/components/FormElements/Button'
+import ErrorModal from '../../shared/components/UIElements/ErrorModal'
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
+import { useHttp } from '../../shared/hooks/http'
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../utils/validators'
 
 
 
-const DUMMY_PLACES = [
-  {
-    id: 'p1',
-    title: 'Empire State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg',
-    address: '20 W 34th St, New York, NY 10001, United States',
-    location: {
-      lat: 40.748427,
-      lng: -73.985563
-    },
-    creatorId: 'u1'
-  },
-  {
-    id: 'p2',
-    title: 'Emp. State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg',
-    address: '20 W 34th St, New York, NY 10001, United States',
-    location: {
-      lat: 40.748427,
-      lng: -73.985563
-    },
-    creatorId: 'u2'
-  },
-]
+const EditPlace = () => {
 
-
-export default props => {
-
-  const [isLoading, setIsLoading] = useState(true)
+  const [place, setPlace] = useState()
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const { send, errorMessage, errorClear, isLoading } = useHttp()
+  const history = useHistory()
 
   const placeId = useParams().placeId
-
-  const identifiedPlace = DUMMY_PLACES.find(place => place.id === placeId)
 
   const [state, inputHandler, setFormData] = useForm({
     title: {
@@ -58,7 +34,37 @@ export default props => {
     }
   }, false)
 
-  if (!identifiedPlace) {
+
+  useEffect(() => {
+    send(`http://localhost:5000/api/places/${placeId}`).then(response => {
+      setPlace(response.place)
+    })
+  }, [placeId, send, setPlace])
+
+  useEffect(() => {
+    if (place) {
+      console.log(place)
+      setFormData({
+        title: {
+          value: place.title,
+          isValid: true
+        },
+        description: {
+          value: place.description,
+          isValid: true
+        }
+      }, true)
+      setIsInitialLoading(false)
+    }
+  }, [place, setFormData])
+
+  if (isInitialLoading) {
+    return <Card>
+      <h2>Is Loading ...</h2>
+    </Card>
+  }
+
+  if (!place) {
     return (
       <div className="center">
         <Card><h2>Could not find place!</h2></Card>
@@ -66,34 +72,20 @@ export default props => {
     )
   }
 
-  useEffect(() => {
-    setFormData({
-      title: {
-        value: identifiedPlace.title,
-        isValid: true
-      },
-      description: {
-        value: identifiedPlace.description,
-        isValid: true
-      }
-    }, true)
-    setIsLoading(false)
-  }, [setFormData, identifiedPlace])
-
   const submitHander = event => {
     event.preventDefault()
-    console.log(state.inputs)
+    send(`http://localhost:5000/api/places/${placeId}`, 'PATCH', {
+      title: state.inputs.title.value,
+      description: state.inputs.description.value
+    }).then(() => {
+      history.push(`/${place.creator}/places`)
+    })
   }
 
-
-  if (isLoading) {
-    return <Card>
-      <h2>Is Loading ...</h2>
-    </Card>
-  }
-
-  return (
+  return <>
+    <ErrorModal error={errorMessage} onClear={errorClear} />
     <form className="place-form" onSubmit={submitHander}>
+      {isLoading && <LoadingSpinner />}
       <Input
         id="title"
         element="input"
@@ -122,5 +114,6 @@ export default props => {
         SAVE PLACE
       </Button>
     </form>
-  )
+  </>
 }
+export default EditPlace

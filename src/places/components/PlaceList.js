@@ -5,7 +5,7 @@ import Card from '../../shared/components/UIElements/Card'
 import Button from '../../shared/components/FormElements/Button'
 import PlaceItem from './PlaceItem'
 
-export default props => {
+const PlaceList = props => {
   if (props.items.length === 0) {
     return (
       <div className="place-list center">
@@ -27,10 +27,12 @@ export default props => {
           title={place.title}
           description={place.description}
           address={place.address}
-          creatorId={place.creatorId}
+          creator={place.creator}
           location={place.location}
+          placeDelete={() => props.deletePlaceById(place.id)}
         />
       ))}
     </ul>
   )
 }
+export default PlaceList

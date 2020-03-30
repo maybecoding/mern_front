@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react'
 
 import './Map.css'
 
-export default props => {
+const Map = props => {
   const mapRef = useRef()
 
 
@@ -12,7 +12,6 @@ export default props => {
 
   useEffect(() => {
     // const map = 
-    console.log(mapRef)
     const map = new window.ymaps.Map(mapRef.current, { center, zoom }, {
       searchControlProvider: 'yandex#search'
     })
@@ -34,4 +33,4 @@ export default props => {
     </div>
   )
 }
-
+export default Map

@@ -9,8 +9,8 @@ import Map from '../../shared/components/UIElements/Map'
 import { ContextAuth } from '../../shared/context/auth'
 
 
-export default props => {
-  const auth = useContext(ContextAuth)
+const PlaceItem = props => {
+  const { userId } = useContext(ContextAuth)
 
   const [isMapOpen, setIsMapOpen] = useState(false)
   const showMapHandler = () => setIsMapOpen(true)
@@ -21,9 +21,9 @@ export default props => {
   const showConfirmDelete = () => setIsConfirmOpen(true)
   const hideConfirmDelete = () => setIsConfirmOpen(false)
 
-  const deletePlace = () => {
+  const placeDeleteHandler = () => {
     hideConfirmDelete()
-    console.log('delete!!!!')
+    props.placeDelete()
   }
   return (
     <React.Fragment>
@@ -46,7 +46,7 @@ export default props => {
         onCancel={hideConfirmDelete}
         footer={<>
           <Button inverse onClick={hideConfirmDelete}>CANCEL</Button>
-          <Button danger onClick={deletePlace}>DELETE</Button>
+          <Button danger onClick={placeDeleteHandler}>DELETE</Button>
         </>}
       >
         <p>Do you want to proced and delete this place? Please note that it can't be undone thereafter.</p>
@@ -63,7 +63,7 @@ export default props => {
           </div>
           <div className="place-item__actions">
             <Button inverse onClick={showMapHandler}>VIEW ON MAP</Button>
-            {auth.isLoggedIn && <>
+            {userId === props.creator && <>
               <Button to={`/places/${props.id}`}>EDIT</Button>
               <Button danger onClick={showConfirmDelete}>DELETE</Button>
             </>}
@@ -74,3 +74,5 @@ export default props => {
   )
 
 }
+
+export default PlaceItem

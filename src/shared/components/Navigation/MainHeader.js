@@ -2,8 +2,9 @@ import React from 'react'
 
 import './MainHeader.css'
 
-export default (props) => (
+const MainHeader = props => (
   <header className="main-header">
     {props.children}
   </header>
 )
+export default MainHeader

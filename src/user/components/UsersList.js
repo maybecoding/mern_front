@@ -4,7 +4,7 @@ import './UserList.css';
 import UserItem from './UserItem';
 import Card from '../../shared/components/UIElements/Card';
 
-export default (props) => {
+const UsersList = (props) => {
   if (props.items.length === 0) return (
     <div className="center">
       <Card>
@@ -19,10 +19,12 @@ export default (props) => {
         <UserItem
           key={user.id}
           id={user.id}
-          image={user.image}
+          image={user.imageUrl}
           name={user.name}
-          placesCount={user.placesCount} />
+          placesCount={user.places.length} />
       ))}
     </ul>
   )
 }
+
+export default UsersList

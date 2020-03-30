@@ -12,12 +12,15 @@ import { ContextAuth } from './shared/context/auth'
 const App = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userId, setUserId] = useState()
 
-  const login = useCallback(() => {
+  const login = useCallback(uid => {
     setIsLoggedIn(true)
+    setUserId(uid)
   }, [])
   const logout = useCallback(() => {
     setIsLoggedIn(false)
+    setUserId(undefined)
   }, [])
 
   const routes = isLoggedIn ? (
@@ -52,7 +55,7 @@ const App = () => {
     )
 
   return (
-    <ContextAuth.Provider value={{ isLoggedIn, login, logout }}>
+    <ContextAuth.Provider value={{ isLoggedIn, userId, login, logout }}>
       <Router>
         <MainNavigation />
         <main>{routes}</main>
