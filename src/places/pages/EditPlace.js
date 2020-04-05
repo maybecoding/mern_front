@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 
 import './PlaceForm.css'
@@ -10,6 +10,7 @@ import Button from '../../shared/components/FormElements/Button'
 import ErrorModal from '../../shared/components/UIElements/ErrorModal'
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
 import { useHttp } from '../../shared/hooks/http'
+import { AuthContext } from '../../shared/context/auth'
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../utils/validators'
 
 
@@ -19,6 +20,7 @@ const EditPlace = () => {
   const [place, setPlace] = useState()
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const { send, errorMessage, errorClear, isLoading } = useHttp()
+  const { token } = useContext(AuthContext)
   const history = useHistory()
 
   const placeId = useParams().placeId
@@ -43,7 +45,6 @@ const EditPlace = () => {
 
   useEffect(() => {
     if (place) {
-      console.log(place)
       setFormData({
         title: {
           value: place.title,
@@ -77,7 +78,7 @@ const EditPlace = () => {
     send(`http://localhost:5000/api/places/${placeId}`, 'PATCH', {
       title: state.inputs.title.value,
       description: state.inputs.description.value
-    }).then(() => {
+    }, token).then(() => {
       history.push(`/${place.creator}/places`)
     })
   }
@@ -107,6 +108,12 @@ const EditPlace = () => {
         initialValue={state.inputs.description.value}
         initialIsValid={state.inputs.description.isValid}
       />
+      <Button
+        onClick={() => { history.goBack() }}
+        inverse
+      >
+        BACK
+      </Button>
       <Button
         type="submit"
         disabled={!state.isValid}

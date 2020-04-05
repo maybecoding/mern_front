@@ -9,7 +9,8 @@ import ErrorModal from '../../shared/components/UIElements/ErrorModal'
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
 import Input from '../../shared/components/FormElements/Input'
 import Button from '../../shared/components/FormElements/Button'
-import { ContextAuth } from '../../shared/context/auth'
+import ImageUpload from '../../shared/components/FormElements/ImageUpload'
+import { AuthContext } from '../../shared/context/auth'
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../utils/validators'
 
 
@@ -18,7 +19,7 @@ const NewPlace = () => {
 
   const { send, errorMessage, errorClear, isLoading } = useHttp()
 
-  const { userId } = useContext(ContextAuth)
+  const { userId, token } = useContext(AuthContext)
 
   const history = useHistory()
 
@@ -35,23 +36,28 @@ const NewPlace = () => {
       value: '',
       isValid: false
     },
+    image: {
+      value: null,
+      isValid: false
+    }
   }, false)
 
+
+  const data = new FormData()
+  for (let field in state.inputs) {
+    data.append(field, state.inputs[field].value)
+  }
   const submitHandler = event => {
     event.preventDefault()
-    send('http://localhost:5000/api/places', 'POST', {
-      title: state.inputs.title.value,
-      description: state.inputs.description.value,
-      address: state.inputs.address.value,
-      creatorId: userId
-    }).then(() => {
+    send('http://localhost:5000/api/places', 'POST', data, token
+    ).then(() => {
       history.push(`/${userId}/places`)
     })
   }
 
 
   return <>
-    <ErrorModal error={errorMessage} onClear={errorClear}/>
+    <ErrorModal error={errorMessage} onClear={errorClear} />
     {isLoading && <LoadingSpinner asOverlay />}
     <form className="place-form" onSubmit={submitHandler}>
       <Input
@@ -80,6 +86,7 @@ const NewPlace = () => {
         validators={[VALIDATOR_REQUIRE()]}
         onInput={inputHandler}
       />
+      <ImageUpload id="image" onInput={inputHandler} center />
       <Button
         type="submit"
         disabled={!state.isValid}

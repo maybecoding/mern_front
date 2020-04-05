@@ -33,14 +33,20 @@ export const useHttp = callback => {
 
   // }, [setIsLoading, setErrorMessage])
 
-  const send = useCallback( (url, method = 'GET', json) => new Promise( (resolve) => {
+  const send = useCallback( (url, method = 'GET', body, token) => new Promise( (resolve) => {
     
     setIsLoading(true)
     let responseIsOk, stage = 'initialization'
+
+    const isJson = body && body.constructor.name === 'Object'
+    let headers = (isJson || token) ? {} : undefined
+    if (isJson) headers['Content-Type'] = 'application/json'
+    if (token) headers['Authorization'] = `Bearer ${token}`
+    headers = new Headers(headers)
     fetch(url, {
-      method: method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(json)
+      method,
+      headers,
+      body: isJson ? JSON.stringify(body) : body
     }).then(response => {
       stage = 'parsing response'
       responseIsOk = response.ok
