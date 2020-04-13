@@ -38,7 +38,7 @@ const EditPlace = () => {
 
 
   useEffect(() => {
-    send(`http://localhost:5000/api/places/${placeId}`).then(response => {
+    send(`${process.env.REACT_APP_BACKEND_URL}/places/${placeId}`).then(response => {
       setPlace(response.place)
     })
   }, [placeId, send, setPlace])
@@ -75,7 +75,7 @@ const EditPlace = () => {
 
   const submitHander = event => {
     event.preventDefault()
-    send(`http://localhost:5000/api/places/${placeId}`, 'PATCH', {
+    send(`${process.env.REACT_APP_BACKEND_URL}/places/${placeId}`, 'PATCH', {
       title: state.inputs.title.value,
       description: state.inputs.description.value
     }, token).then(() => {

@@ -17,14 +17,14 @@ const UserPlaces = () => {
   const userId = useParams().userId
 
   useEffect(() => {
-    send(`http://localhost:5000/api/places/user/${userId}`)
+    send(`${process.env.REACT_APP_BACKEND_URL}/places/user/${userId}`)
       .then(response => {
         setPlaces(response.places)
       })
   }, [userId, send])
 
   const deletePlaceById = id => {
-    send(`http://localhost:5000/api/places/${id}`, 'DELETE', null, token).then(() => {
+    send(`${process.env.REACT_APP_BACKEND_URL}/places/${id}`, 'DELETE', null, token).then(() => {
       setPlaces(places => places.filter(p => p.id !== id))
     })
   }

@@ -49,7 +49,7 @@ const NewPlace = () => {
   }
   const submitHandler = event => {
     event.preventDefault()
-    send('http://localhost:5000/api/places', 'POST', data, token
+    send(`${process.env.REACT_APP_BACKEND_URL}/places`, 'POST', data, token
     ).then(() => {
       history.push(`/${userId}/places`)
     })

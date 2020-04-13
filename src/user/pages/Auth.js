@@ -42,7 +42,7 @@ export default function Auth () {
     event.preventDefault()
 
     //prepare
-    const url = `http://localhost:5000/api/users/${isLoginMode ? 'login' : 'signup'}`
+    const url = `${process.env.REACT_APP_BACKEND_URL}/users/${isLoginMode ? 'login' : 'signup'}`
       ,data = isLoginMode ? {} : new FormData()
     for (let field in state.inputs) {
       if (isLoginMode) data[field] = state.inputs[field].value
